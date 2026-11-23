@@ -28,12 +28,16 @@ export async function syncUserSubscription(user: AnyUser): Promise<AnyUser> {
     {
       $set: {
         subscriptionPlan: "free",
+        // Match the webhook downgrade path exactly (see payment.ts):
+        // a free plan carries no expiry date.
+        subscriptionExpiresAt: null,
         subscriptionCancelAtPeriodEnd: false,
       },
     }
   )
 
   user.subscriptionPlan = "free"
+  user.subscriptionExpiresAt = null
   user.subscriptionCancelAtPeriodEnd = false
 
   await deactivateExtraVendorItems(String(user._id))

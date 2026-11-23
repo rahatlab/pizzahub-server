@@ -91,3 +91,8 @@ export const userListQuery = z.object({
 export const blockBody = z.object({
   isBlocked: z.boolean(),
 })
+
+export const transactionListQuery = z.object({
+  status: z.enum(["pending", "success", "failed"]).optional(),
+  ...paginationQuery,
+})
