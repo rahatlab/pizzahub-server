@@ -53,7 +53,7 @@ uploadRouter.post(
     let upstream: Response
     try {
       upstream = await fetch(
-        `https://api.imgbb.com/v1/upload?key=${encodeURIComponent(env.IMGBB_API_KEY)}`,
+        `https://api.imgbb.com/1/upload?key=${encodeURIComponent(env.IMGBB_API_KEY)}`,
         { method: "POST", body: form, signal: AbortSignal.timeout(8_000) }
       )
     } catch {
