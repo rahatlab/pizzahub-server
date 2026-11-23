@@ -11,8 +11,7 @@
     "start": "tsx scripts/dev-server.ts",
     "build": "tsc --noEmit",
     "db:indexes": "tsx scripts/db-indexes.ts",
-    "seed:admin": "tsx scripts/seed-admin.ts",
-    "seed:demo": "tsx scripts/seed-demo.ts"
+    "seed:admin": "tsx scripts/seed-admin.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",
