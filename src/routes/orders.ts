@@ -244,7 +244,7 @@ async function transitionOrder(
   const updated = await Order.findOneAndUpdate(
     { _id: id, status: "pending", [ownerField]: actor.id },
     { $set: { status: nextStatus, ...extra } },
-    { new: true }
+    { returnDocument: "after" }
   ).lean()
 
   if (!updated) {
