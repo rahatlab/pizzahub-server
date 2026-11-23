@@ -4,7 +4,7 @@ Express 5 + TypeScript API for PizzaHub. This repository is the backend only; th
 
 ## Status
 
-Phase 0 (repo setup) complete. The API is implemented in Phase 2 of the project plan.
+API complete: auth/JWT verification, menu search + moderation, orders, image upload, Stripe Premium, and role dashboards. Setup, environment variables and challenge notes are documented in the client repository's [README](https://github.com/rahatlab/pizzahub-client#readme).
 
 ## Planned stack
 
