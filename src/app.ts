@@ -9,6 +9,8 @@ import { usersRouter } from "./routes/users"
 import { menuRouter } from "./routes/menu"
 import { ordersRouter } from "./routes/orders"
 import { uploadRouter } from "./routes/upload"
+import { paymentRouter, stripeWebhook } from "./routes/payment"
+import { dashboardRouter } from "./routes/dashboard"
 
 const app = express()
 
@@ -41,8 +43,16 @@ app.use(
   })
 )
 
-// Phase 3: mount the Stripe webhook with express.raw HERE, before
-// express.json — Vercel does not pre-parse bodies (plan §6.3).
+// Stripe webhook FIRST: express.raw must see the untouched body for
+// signature verification, before express.json — Vercel does not pre-parse
+// bodies (plan §6.3, §9.3). Mounted outside the rate limiter: the Stripe
+// signature is the auth, and throttling webhooks would drop state changes.
+app.post(
+  "/api/payment/webhook",
+  express.raw({ type: "application/json" }),
+  stripeWebhook
+)
+
 app.use(express.json({ limit: "1mb" }))
 
 // Health stays outside the DB middleware so it reports 200 even during a
@@ -59,6 +69,8 @@ app.use("/api/users", usersRouter)
 app.use("/api/menu", menuRouter)
 app.use("/api/orders", ordersRouter)
 app.use("/api/upload", uploadRouter)
+app.use("/api/payment", paymentRouter)
+app.use("/api/dashboard", dashboardRouter)
 
 app.use(notFoundHandler)
 app.use(errorHandler)
