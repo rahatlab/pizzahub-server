@@ -1,5 +1,5 @@
-import { connectDb, disconnectDb } from "../src/config/db"
-import { User } from "../src/models/User"
+import { connectDb, disconnectDb } from "../src/config/db.js"
+import { User } from "../src/models/User.js"
 
 /**
  * Dev helper: flips a known test account's role (role can't be chosen at

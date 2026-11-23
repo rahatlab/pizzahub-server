@@ -1,5 +1,5 @@
 import Stripe from "stripe"
-import { env } from "./env"
+import { env } from "./env.js"
 
 /**
  * Module-scope Stripe client (plan §6.2: cache at module scope so cold

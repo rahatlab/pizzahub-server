@@ -1,5 +1,5 @@
-import { connectDb, disconnectDb } from "../src/config/db"
-import { User } from "../src/models/User"
+import { connectDb, disconnectDb } from "../src/config/db.js"
+import { User } from "../src/models/User.js"
 
 /**
  * Promotes an existing account to admin (plan §8.1): admins never self-

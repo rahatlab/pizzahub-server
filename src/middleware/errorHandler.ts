@@ -1,8 +1,8 @@
 import type { ErrorRequestHandler, RequestHandler } from "express"
 import { ZodError } from "zod"
 import { MulterError } from "multer"
-import { ApiError, type ApiErrorDetail } from "../utils/ApiError"
-import { isProduction } from "../config/env"
+import { ApiError, type ApiErrorDetail } from "../utils/ApiError.js"
+import { isProduction } from "../config/env.js"
 
 export const notFoundHandler: RequestHandler = (req, _res, next) => {
   next(

@@ -1,6 +1,6 @@
 import type { RequestHandler } from "express"
-import { connectDb } from "../config/db"
-import { ApiError } from "../utils/ApiError"
+import { connectDb } from "../config/db.js"
+import { ApiError } from "../utils/ApiError.js"
 
 /**
  * Opens the Mongo connection before DB-backed routes run. With

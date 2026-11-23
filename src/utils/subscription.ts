@@ -1,7 +1,7 @@
-import { FREE_PLAN_ITEM_LIMIT } from "../config/constants"
-import { MenuItem } from "../models/MenuItem"
-import { User } from "../models/User"
-import { isPast } from "./dates"
+import { FREE_PLAN_ITEM_LIMIT } from "../config/constants.js"
+import { MenuItem } from "../models/MenuItem.js"
+import { User } from "../models/User.js"
+import { isPast } from "./dates.js"
 
 type AnyUser = Record<string, any>
 

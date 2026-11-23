@@ -1,8 +1,8 @@
-import { connectDb, disconnectDb } from "../src/config/db"
-import { User } from "../src/models/User"
-import { MenuItem } from "../src/models/MenuItem"
-import { Order } from "../src/models/Order"
-import { Transaction } from "../src/models/Transaction"
+import { connectDb, disconnectDb } from "../src/config/db.js"
+import { User } from "../src/models/User.js"
+import { MenuItem } from "../src/models/MenuItem.js"
+import { Order } from "../src/models/Order.js"
+import { Transaction } from "../src/models/Transaction.js"
 
 /**
  * One-off index sync (plan §6.2): models run with autoIndex:false, so run

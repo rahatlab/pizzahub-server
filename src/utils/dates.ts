@@ -1,4 +1,4 @@
-import { ApiError } from "./ApiError"
+import { ApiError } from "./ApiError.js"
 
 export function startOfUtcDay(value: string | Date): Date {
   const date = value instanceof Date ? value : new Date(value)

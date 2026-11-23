@@ -1,4 +1,4 @@
-import type { PaginationMeta } from "../types/domain"
+import type { PaginationMeta } from "../types/domain.js"
 
 export type ResponseMeta = {
   timestamp: string

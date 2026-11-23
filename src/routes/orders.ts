@@ -1,27 +1,27 @@
 import { Router } from "express"
-import { Order } from "../models/Order"
-import { MenuItem } from "../models/MenuItem"
-import { User } from "../models/User"
-import { verifyJWT } from "../middleware/verifyJWT"
-import { requireRole } from "../middleware/requireRole"
+import { Order } from "../models/Order.js"
+import { MenuItem } from "../models/MenuItem.js"
+import { User } from "../models/User.js"
+import { verifyJWT } from "../middleware/verifyJWT.js"
+import { requireRole } from "../middleware/requireRole.js"
 import {
   validate,
   validatedBody,
   validatedParams,
   validatedQuery,
-} from "../middleware/validate"
+} from "../middleware/validate.js"
 import {
   idParam,
   orderCreateBody,
   orderListQuery,
   orderRejectBody,
-} from "../validators/schemas"
-import { ApiResponse } from "../utils/ApiResponse"
-import { ApiError } from "../utils/ApiError"
-import { asyncHandler } from "../utils/asyncHandler"
-import { serializeOrder } from "../utils/serialize"
-import { buildPagination, parsePagination } from "../utils/pagination"
-import { normalizeDeliveryDate } from "../utils/dates"
+} from "../validators/schemas.js"
+import { ApiResponse } from "../utils/ApiResponse.js"
+import { ApiError } from "../utils/ApiError.js"
+import { asyncHandler } from "../utils/asyncHandler.js"
+import { serializeOrder } from "../utils/serialize.js"
+import { buildPagination, parsePagination } from "../utils/pagination.js"
+import { normalizeDeliveryDate } from "../utils/dates.js"
 
 export const ordersRouter = Router()
 

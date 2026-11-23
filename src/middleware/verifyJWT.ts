@@ -1,12 +1,12 @@
 import type { RequestHandler } from "express"
 import { createRemoteJWKSet, jwtVerify } from "jose"
-import { env } from "../config/env"
-import { connectDb } from "../config/db"
-import { User } from "../models/User"
-import { ApiError } from "../utils/ApiError"
-import { syncUserSubscription } from "../utils/subscription"
-import type { AuthUser } from "../types/domain"
-import type { Role } from "../config/constants"
+import { env } from "../config/env.js"
+import { connectDb } from "../config/db.js"
+import { User } from "../models/User.js"
+import { ApiError } from "../utils/ApiError.js"
+import { syncUserSubscription } from "../utils/subscription.js"
+import type { AuthUser } from "../types/domain.js"
+import type { Role } from "../config/constants.js"
 
 // Cached at module scope for Vercel cold starts (plan §6.2): the JWKS is
 // fetched at most once per cache window, not per request.

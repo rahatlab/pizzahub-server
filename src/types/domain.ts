@@ -1,4 +1,4 @@
-import type { Role } from "../config/constants"
+import type { Role } from "../config/constants.js"
 
 export type SubscriptionPlan = "free" | "premium"
 

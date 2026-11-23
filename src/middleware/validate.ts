@@ -1,7 +1,7 @@
 import type { Request, RequestHandler } from "express"
 import { ZodError, type ZodType } from "zod"
-import { ApiError } from "../utils/ApiError"
-import type { RequestValidation } from "../types/domain"
+import { ApiError } from "../utils/ApiError.js"
+import type { RequestValidation } from "../types/domain.js"
 
 type Schemas = {
   body?: ZodType

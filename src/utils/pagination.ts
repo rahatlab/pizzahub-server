@@ -1,5 +1,5 @@
-import { MAX_PAGE_SIZE, MENU_PAGE_SIZE } from "../config/constants"
-import type { PaginationMeta } from "../types/domain"
+import { MAX_PAGE_SIZE, MENU_PAGE_SIZE } from "../config/constants.js"
+import type { PaginationMeta } from "../types/domain.js"
 
 export function parsePagination(
   query: Record<string, unknown>,

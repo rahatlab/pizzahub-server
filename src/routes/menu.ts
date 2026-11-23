@@ -1,15 +1,15 @@
 import { Router } from "express"
-import { MenuItem } from "../models/MenuItem"
-import { User } from "../models/User"
-import { connectDbMiddleware } from "../middleware/connectDb"
-import { verifyJWT } from "../middleware/verifyJWT"
-import { requireRole, assertOwner } from "../middleware/requireRole"
+import { MenuItem } from "../models/MenuItem.js"
+import { User } from "../models/User.js"
+import { connectDbMiddleware } from "../middleware/connectDb.js"
+import { verifyJWT } from "../middleware/verifyJWT.js"
+import { requireRole, assertOwner } from "../middleware/requireRole.js"
 import {
   validate,
   validatedBody,
   validatedParams,
   validatedQuery,
-} from "../middleware/validate"
+} from "../middleware/validate.js"
 import {
   idParam,
   menuAdminListQuery,
@@ -19,16 +19,16 @@ import {
   menuStatusBody,
   menuUpdateBody,
   menuVendorListQuery,
-} from "../validators/schemas"
-import { ApiResponse } from "../utils/ApiResponse"
-import { ApiError } from "../utils/ApiError"
-import { asyncHandler } from "../utils/asyncHandler"
-import { serializeMenuItem } from "../utils/serialize"
-import { buildPagination, parsePagination, parseString } from "../utils/pagination"
-import { escapeRegex } from "../utils/escapeRegex"
-import { countNonRejectedItems, isPremiumActive } from "../utils/subscription"
-import { FREE_PLAN_ITEM_LIMIT, MENU_CATEGORIES } from "../config/constants"
-import type { AuthUser } from "../types/domain"
+} from "../validators/schemas.js"
+import { ApiResponse } from "../utils/ApiResponse.js"
+import { ApiError } from "../utils/ApiError.js"
+import { asyncHandler } from "../utils/asyncHandler.js"
+import { serializeMenuItem } from "../utils/serialize.js"
+import { buildPagination, parsePagination, parseString } from "../utils/pagination.js"
+import { escapeRegex } from "../utils/escapeRegex.js"
+import { countNonRejectedItems, isPremiumActive } from "../utils/subscription.js"
+import { FREE_PLAN_ITEM_LIMIT, MENU_CATEGORIES } from "../config/constants.js"
+import type { AuthUser } from "../types/domain.js"
 
 export const menuRouter = Router()
 

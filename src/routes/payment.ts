@@ -1,26 +1,26 @@
 import { Router } from "express"
 import type { RequestHandler } from "express"
 import type Stripe from "stripe"
-import { env } from "../config/env"
+import { env } from "../config/env.js"
 import {
   stripe,
   paymentsConfigured,
   PREMIUM_CURRENCY,
   PREMIUM_PRICE_CENTS,
-} from "../config/stripe"
-import { connectDb } from "../config/db"
-import { User } from "../models/User"
-import { Transaction } from "../models/Transaction"
-import { verifyJWT } from "../middleware/verifyJWT"
-import { requireRole } from "../middleware/requireRole"
-import { validate, validatedQuery } from "../middleware/validate"
-import { transactionListQuery } from "../validators/schemas"
-import { ApiResponse } from "../utils/ApiResponse"
-import { ApiError } from "../utils/ApiError"
-import { asyncHandler } from "../utils/asyncHandler"
-import { serializeTransaction } from "../utils/serialize"
-import { buildPagination, parsePagination } from "../utils/pagination"
-import { isPremiumActive } from "../utils/subscription"
+} from "../config/stripe.js"
+import { connectDb } from "../config/db.js"
+import { User } from "../models/User.js"
+import { Transaction } from "../models/Transaction.js"
+import { verifyJWT } from "../middleware/verifyJWT.js"
+import { requireRole } from "../middleware/requireRole.js"
+import { validate, validatedQuery } from "../middleware/validate.js"
+import { transactionListQuery } from "../validators/schemas.js"
+import { ApiResponse } from "../utils/ApiResponse.js"
+import { ApiError } from "../utils/ApiError.js"
+import { asyncHandler } from "../utils/asyncHandler.js"
+import { serializeTransaction } from "../utils/serialize.js"
+import { buildPagination, parsePagination } from "../utils/pagination.js"
+import { isPremiumActive } from "../utils/subscription.js"
 
 export const paymentRouter = Router()
 

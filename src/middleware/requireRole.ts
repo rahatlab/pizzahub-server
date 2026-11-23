@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express"
-import { ApiError } from "../utils/ApiError"
-import type { Role } from "../config/constants"
-import type { AuthUser } from "../types/domain"
+import { ApiError } from "../utils/ApiError.js"
+import type { Role } from "../config/constants.js"
+import type { AuthUser } from "../types/domain.js"
 
 /** 403 FORBIDDEN unless the loaded DB role is in the allow list. */
 export function requireRole(...roles: Role[]): RequestHandler {

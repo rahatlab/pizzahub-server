@@ -1,11 +1,11 @@
 import { Router } from "express"
 import multer from "multer"
-import { env } from "../config/env"
-import { verifyJWT } from "../middleware/verifyJWT"
-import { uploadLimiter } from "../middleware/rateLimit"
-import { ApiResponse } from "../utils/ApiResponse"
-import { ApiError } from "../utils/ApiError"
-import { asyncHandler } from "../utils/asyncHandler"
+import { env } from "../config/env.js"
+import { verifyJWT } from "../middleware/verifyJWT.js"
+import { uploadLimiter } from "../middleware/rateLimit.js"
+import { ApiResponse } from "../utils/ApiResponse.js"
+import { ApiError } from "../utils/ApiError.js"
+import { asyncHandler } from "../utils/asyncHandler.js"
 
 export const uploadRouter = Router()
 

@@ -1,6 +1,6 @@
 import { rateLimit } from "express-rate-limit"
 import type { NextFunction, Request, Response } from "express"
-import { ApiError } from "../utils/ApiError"
+import { ApiError } from "../utils/ApiError.js"
 
 const FIFTEEN_MINUTES = 15 * 60 * 1000
 

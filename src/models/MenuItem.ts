@@ -1,5 +1,5 @@
 import mongoose, { Schema, model, type Model } from "mongoose"
-import { MENU_CATEGORIES, MENU_STATUSES } from "../config/constants"
+import { MENU_CATEGORIES, MENU_STATUSES } from "../config/constants.js"
 
 const menuItemSchema = new Schema(
   {

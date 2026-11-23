@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { MENU_CATEGORIES, MENU_STATUSES, ORDER_STATUSES, ROLES } from "../config/constants"
+import { MENU_CATEGORIES, MENU_STATUSES, ORDER_STATUSES, ROLES } from "../config/constants.js"
 
 /** Shared page/limit parsing (max 50 enforced in pagination.ts too). */
 export const paginationQuery = {

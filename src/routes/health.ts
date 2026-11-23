@@ -1,6 +1,6 @@
 import { Router } from "express"
-import { dbState } from "../config/db"
-import { ApiResponse } from "../utils/ApiResponse"
+import { dbState } from "../config/db.js"
+import { ApiResponse } from "../utils/ApiResponse.js"
 
 export const healthRouter = Router()
 
