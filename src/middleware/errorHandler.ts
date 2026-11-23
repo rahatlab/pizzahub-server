@@ -34,6 +34,17 @@ function isCastError(error: unknown): boolean {
   )
 }
 
+/** express.json()/urlencoded() rejections carry a `type` like `entity.parse.failed`. */
+function isBodyParserError(error: unknown): error is { type: string } {
+  return Boolean(
+    error &&
+      typeof error === "object" &&
+      "type" in error &&
+      typeof (error as { type?: unknown }).type === "string" &&
+      (error as { type: string }).type.startsWith("entity.")
+  )
+}
+
 function isMongooseValidationError(error: unknown): boolean {
   return Boolean(
     error &&
@@ -61,6 +72,15 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
       err.code === "LIMIT_FILE_SIZE"
         ? new ApiError(413, "Image must be 3MB or smaller.", "UPLOAD_FAILED")
         : new ApiError(400, err.message, "UPLOAD_FAILED")
+  } else if (isBodyParserError(err)) {
+    // Malformed JSON or oversized body from express.json().
+    apiError =
+      err.type === "entity.too.large"
+        ? new ApiError(413, "Request body is too large.", "VALIDATION_ERROR")
+        : ApiError.validation(
+            [{ field: "body", issue: "Invalid JSON in request body." }],
+            "Invalid request body."
+          )
   } else if (isCastError(err)) {
     // Invalid ObjectId → the resource does not exist (plan: invalid id → 404).
     apiError = new ApiError(404, "Resource not found.", "NOT_FOUND")
