@@ -10,6 +10,7 @@ import { ApiResponse } from "../utils/ApiResponse"
 import { ApiError } from "../utils/ApiError"
 import { asyncHandler } from "../utils/asyncHandler"
 import { serializeUser } from "../utils/serialize"
+import { trimVendorToFreeLimit } from "../utils/subscription"
 import { buildPagination, parsePagination, parseString } from "../utils/pagination"
 import { escapeRegex } from "../utils/escapeRegex"
 
@@ -140,6 +141,49 @@ usersRouter.patch(
     }
 
     res.json(ApiResponse.success("User blocked.", serializeUser(user)))
+  })
+)
+
+/**
+ * Remove Premium from a vendor (admin): the payment ledger is untouched and
+ * the plan drops to free. Items beyond the free limit are trimmed — approved
+ * extras go inactive and pending extras are sent back as rejected.
+ */
+usersRouter.delete(
+  "/:id/premium",
+  verifyJWT,
+  requireRole("admin"),
+  validate({ params: idParam }),
+  asyncHandler(async (req, res) => {
+    const { id } = validatedParams<{ id: string }>(req)
+    const user = await User.findById(id)
+    if (!user) throw ApiError.notFound("User not found.")
+
+    if (user.role !== "vendor") {
+      throw ApiError.invalidState(
+        "Only vendor accounts can have Premium removed."
+      )
+    }
+    if (user.subscriptionPlan !== "premium") {
+      throw ApiError.invalidState("This vendor is not on Premium.")
+    }
+
+    user.subscriptionPlan = "free"
+    user.subscriptionExpiresAt = null
+    user.subscriptionCancelAtPeriodEnd = false
+    await user.save()
+
+    const { deactivated, rejected } = await trimVendorToFreeLimit(
+      String(user._id)
+    )
+
+    res.json(
+      ApiResponse.success("Premium removed.", {
+        user: serializeUser(user),
+        deactivatedItems: deactivated,
+        rejectedItems: rejected,
+      })
+    )
   })
 )
 

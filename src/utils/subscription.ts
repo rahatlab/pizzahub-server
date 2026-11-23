@@ -40,29 +40,71 @@ export async function syncUserSubscription(user: AnyUser): Promise<AnyUser> {
   user.subscriptionExpiresAt = null
   user.subscriptionCancelAtPeriodEnd = false
 
-  await deactivateExtraVendorItems(String(user._id))
+  await trimVendorToFreeLimit(String(user._id))
   return user
 }
 
+export type FreeLimitTrim = {
+  /** Approved items moved to `inactive`. */
+  deactivated: number
+  /** Pending items sent back as `rejected` so they are no longer counted. */
+  rejected: number
+}
+
 /**
- * Free plan: keep the three oldest approved items, deactivate any extras.
+ * Free plan counts pending + approved items, so a downgrade can overflow
+ * through either status. Keep approved items first (they are the live menu),
+ * then the oldest pending items, up to the limit. Approved extras go
+ * inactive; pending extras are rejected — they cannot be self-approved, and
+ * the reason tells the vendor why before they edit and resubmit.
  */
-export async function deactivateExtraVendorItems(vendorId: string): Promise<void> {
-  const approved = await MenuItem.find({ vendorId, status: "approved" })
-    .sort({ createdAt: 1 })
-    .select("_id")
-    .lean()
+export async function trimVendorToFreeLimit(
+  vendorId: string
+): Promise<FreeLimitTrim> {
+  const [approved, pending] = await Promise.all([
+    MenuItem.find({ vendorId, status: "approved" })
+      .sort({ createdAt: 1 })
+      .select("_id")
+      .lean(),
+    MenuItem.find({ vendorId, status: "pending" })
+      .sort({ createdAt: 1 })
+      .select("_id")
+      .lean(),
+  ])
 
-  if (approved.length <= FREE_PLAN_ITEM_LIMIT) return
+  if (approved.length + pending.length <= FREE_PLAN_ITEM_LIMIT) {
+    return { deactivated: 0, rejected: 0 }
+  }
 
-  const extras = approved
-    .slice(FREE_PLAN_ITEM_LIMIT)
+  const keepApproved = Math.min(approved.length, FREE_PLAN_ITEM_LIMIT)
+  const keepPending = Math.max(0, FREE_PLAN_ITEM_LIMIT - keepApproved)
+
+  const approvedExtras = approved
+    .slice(keepApproved)
     .map((item) => item._id)
+  const pendingExtras = pending.slice(keepPending).map((item) => item._id)
 
-  await MenuItem.updateMany(
-    { _id: { $in: extras } },
-    { $set: { status: "inactive" } }
-  )
+  if (approvedExtras.length > 0) {
+    await MenuItem.updateMany(
+      { _id: { $in: approvedExtras } },
+      { $set: { status: "inactive" } }
+    )
+  }
+
+  if (pendingExtras.length > 0) {
+    await MenuItem.updateMany(
+      { _id: { $in: pendingExtras } },
+      {
+        $set: {
+          status: "rejected",
+          rejectionReason:
+            "Free plan allows 3 items. This item is over the limit after the plan change.",
+        },
+      }
+    )
+  }
+
+  return { deactivated: approvedExtras.length, rejected: pendingExtras.length }
 }
 
 export async function countNonRejectedItems(vendorId: string): Promise<number> {
