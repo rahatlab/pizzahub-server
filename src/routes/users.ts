@@ -145,9 +145,10 @@ usersRouter.patch(
 )
 
 /**
- * Remove Premium from a vendor (admin): the payment ledger is untouched and
- * the plan drops to free. Items beyond the free limit are trimmed — approved
- * extras go inactive and pending extras are sent back as rejected.
+ * Remove Premium (admin): the payment ledger is untouched and the plan drops
+ * to free. Mirrors block/unblock — admins are off limits and the call is a
+ * no-op when the plan is already free. Items over the free limit are trimmed
+ * by trimVendorToFreeLimit.
  */
 usersRouter.delete(
   "/:id/premium",
@@ -158,30 +159,24 @@ usersRouter.delete(
     const { id } = validatedParams<{ id: string }>(req)
     const user = await User.findById(id)
     if (!user) throw ApiError.notFound("User not found.")
-
-    if (user.role !== "vendor") {
-      throw ApiError.invalidState(
-        "Only vendor accounts can have Premium removed."
-      )
-    }
-    if (user.subscriptionPlan !== "premium") {
-      throw ApiError.invalidState("This vendor is not on Premium.")
+    if (user.role === "admin") {
+      throw ApiError.forbidden("Admin accounts cannot be changed.")
     }
 
-    user.subscriptionPlan = "free"
-    user.subscriptionExpiresAt = null
-    user.subscriptionCancelAtPeriodEnd = false
-    await user.save()
-
-    const { deactivated, rejected } = await trimVendorToFreeLimit(
-      String(user._id)
-    )
+    let trimmed = { deactivated: 0, rejected: 0 }
+    if (user.subscriptionPlan === "premium") {
+      user.subscriptionPlan = "free"
+      user.subscriptionExpiresAt = null
+      user.subscriptionCancelAtPeriodEnd = false
+      await user.save()
+      trimmed = await trimVendorToFreeLimit(String(user._id))
+    }
 
     res.json(
       ApiResponse.success("Premium removed.", {
         user: serializeUser(user),
-        deactivatedItems: deactivated,
-        rejectedItems: rejected,
+        deactivatedItems: trimmed.deactivated,
+        rejectedItems: trimmed.rejected,
       })
     )
   })

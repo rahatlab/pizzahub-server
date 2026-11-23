@@ -53,47 +53,39 @@ export type FreeLimitTrim = {
 
 /**
  * Free plan counts pending + approved items, so a downgrade can overflow
- * through either status. Keep approved items first (they are the live menu),
- * then the oldest pending items, up to the limit. Approved extras go
- * inactive; pending extras are rejected — they cannot be self-approved, and
- * the reason tells the vendor why before they edit and resubmit.
+ * through either status. Keep the three oldest counted items: approved
+ * extras go inactive, pending extras are rejected (pending → inactive would
+ * let the vendor self-approve them) with a reason they can act on.
  */
 export async function trimVendorToFreeLimit(
   vendorId: string
 ): Promise<FreeLimitTrim> {
-  const [approved, pending] = await Promise.all([
-    MenuItem.find({ vendorId, status: "approved" })
-      .sort({ createdAt: 1 })
-      .select("_id")
-      .lean(),
-    MenuItem.find({ vendorId, status: "pending" })
-      .sort({ createdAt: 1 })
-      .select("_id")
-      .lean(),
-  ])
+  const counted = await MenuItem.find({
+    vendorId,
+    status: { $in: ["pending", "approved"] },
+  })
+    .sort({ createdAt: 1 })
+    .select("_id status")
+    .lean()
 
-  if (approved.length + pending.length <= FREE_PLAN_ITEM_LIMIT) {
-    return { deactivated: 0, rejected: 0 }
-  }
-
-  const keepApproved = Math.min(approved.length, FREE_PLAN_ITEM_LIMIT)
-  const keepPending = Math.max(0, FREE_PLAN_ITEM_LIMIT - keepApproved)
-
-  const approvedExtras = approved
-    .slice(keepApproved)
+  const extras = counted.slice(FREE_PLAN_ITEM_LIMIT)
+  const approvedIds = extras
+    .filter((item) => item.status === "approved")
     .map((item) => item._id)
-  const pendingExtras = pending.slice(keepPending).map((item) => item._id)
+  const pendingIds = extras
+    .filter((item) => item.status === "pending")
+    .map((item) => item._id)
 
-  if (approvedExtras.length > 0) {
+  if (approvedIds.length > 0) {
     await MenuItem.updateMany(
-      { _id: { $in: approvedExtras } },
+      { _id: { $in: approvedIds } },
       { $set: { status: "inactive" } }
     )
   }
 
-  if (pendingExtras.length > 0) {
+  if (pendingIds.length > 0) {
     await MenuItem.updateMany(
-      { _id: { $in: pendingExtras } },
+      { _id: { $in: pendingIds } },
       {
         $set: {
           status: "rejected",
@@ -104,7 +96,7 @@ export async function trimVendorToFreeLimit(
     )
   }
 
-  return { deactivated: approvedExtras.length, rejected: pendingExtras.length }
+  return { deactivated: approvedIds.length, rejected: pendingIds.length }
 }
 
 export async function countNonRejectedItems(vendorId: string): Promise<number> {
